@@ -18,9 +18,13 @@ export default function TabLayout() {
                 <Label>Home</Label>
                 <Icon src={LUCIDE_HOME_ICON} />
             </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="basket">
+                <Label>Basket</Label>
+                <Icon src={LUCIDE_BASKET_ICON} />
+            </NativeTabs.Trigger>
         </NativeTabs>
     );
-}
+}   
 
 // SDK 54 native tabs accept image sources here, not arbitrary Lucide React elements.
 function lucideTabIcon(base64: string): ImageSourcePropType {
