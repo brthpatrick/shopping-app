@@ -43,7 +43,8 @@ export default function ProductDetailsScreen() {
                     </Text>
 
                     <View style={styles.ratingRow}>
-                        <Text style={styles.ratingText}>⭐ {product.rating} (Reviews Score)</Text>
+                        <StarRating rating={product.rating} />
+                        <Text style={styles.ratingText}>{product.rating} (Reviews Score)</Text>
                     </View>
 
                     <Text style={styles.sectionTitle}>Brand</Text>
@@ -66,6 +67,48 @@ export default function ProductDetailsScreen() {
         </SafeAreaView>
     );
 }
+
+function StarRating({ rating }: { rating: number }) {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+        const fill = Math.min(1, Math.max(0, rating - (i - 1)));
+        stars.push(
+            <View key={i} style={starStyles.starContainer}>
+                <Text style={starStyles.emptyStar}>★</Text>
+                <View style={[starStyles.filledOverlay, { width: `${fill * 100}%` }]}>
+                    <Text style={starStyles.filledStar}>★</Text>
+                </View>
+            </View>
+        );
+    }
+    return <View style={starStyles.row}>{stars}</View>;
+}
+
+const starStyles = StyleSheet.create({
+    row: {
+        flexDirection: "row",
+    },
+    starContainer: {
+        position: "relative",
+        width: 20,
+        height: 20,
+    },
+    emptyStar: {
+        fontSize: 18,
+        color: "#555",
+    },
+    filledOverlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        height: "100%",
+        overflow: "hidden",
+    },
+    filledStar: {
+        fontSize: 18,
+        color: "#FFD700",
+    },
+});
 
 const styles = StyleSheet.create({
     container: {
