@@ -13,6 +13,7 @@ type Product = {
     thumbnail: string;
 };
 
+
 export default function ProductsScreen () {
     const { products } = useLocalSearchParams<{ products: string }>();
 
@@ -30,8 +31,9 @@ export default function ProductsScreen () {
         .join(" ");
 
     const renderItem = ({ item }: { item: Product }) => (
-        <TouchableOpacity style={styles.card} activeOpacity={0.7}>
-            <Image source={{ uri: item.thumbnail }} style={styles.image} />
+        <TouchableOpacity style={styles.card} activeOpacity={0.7} 
+            onPress={() => router.push(`/home/${products}/${item.id}` as any)}>
+            <Image source={{ uri: item.thumbnail }} style={styles.image} contentFit="contain" />
             <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
             <Text style={styles.brand}>{item.brand}</Text>
             <Text style={styles.price}>${item.price}</Text>
@@ -96,8 +98,7 @@ const styles = StyleSheet.create({
     image: {
         width: "100%",
         height: 140,
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16,
+        backgroundColor: "#1a1a2e",
     },
     title: {
         color: "#ffffff",
