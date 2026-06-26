@@ -1,6 +1,6 @@
 import useFetch from "@/hooks/useFetch";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
+import { FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function capitalize(text: string): string {
     return text
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         paddingVertical: 18,
         paddingHorizontal: 24,
         borderRadius: 50,
-        marginTop: 12,  
+        marginTop: 25,  
         borderWidth: 1,
         borderColor: "#0f3460"
     },
