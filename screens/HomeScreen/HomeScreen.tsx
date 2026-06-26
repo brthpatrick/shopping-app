@@ -1,7 +1,7 @@
 import useFetch from "@/hooks/useFetch";
+import { useRouter } from "expo-router";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 function capitalize(text: string): string {
     return text
         .split("-")
@@ -13,8 +13,11 @@ export default function HomeScreen() {
 
     const { data } = useFetch("https://dummyjson.com/products/category-list");
 
+    const router = useRouter();
+
     const renderItem = ({ item}: { item: any}) => (
-        <TouchableOpacity style={styles.card} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.card} activeOpacity={0.7} 
+        onPress={() => router.push(`/home/${item}` as any)}>
             <Text style={styles.cardText}>{capitalize(item)}</Text>
             <View style={styles.circle} />
         </TouchableOpacity>
