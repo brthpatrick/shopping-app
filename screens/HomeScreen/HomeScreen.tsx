@@ -1,5 +1,5 @@
 import useFetch from "@/hooks/useFetch";
-import { FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 function capitalize(text: string): string {
@@ -16,6 +16,7 @@ export default function HomeScreen() {
     const renderItem = ({ item}: { item: any}) => (
         <TouchableOpacity style={styles.card} activeOpacity={0.7}>
             <Text style={styles.cardText}>{capitalize(item)}</Text>
+            <View style={styles.circle} />
         </TouchableOpacity>
     );
        
@@ -56,11 +57,22 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginTop: 25,  
         borderWidth: 1,
-        borderColor: "#0f3460"
+        borderColor: "#0f3460",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
     cardText: {
         fontSize: 18,
         fontWeight: "700",
         color: "#e94560",
+    },
+    circle: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: "#0f3460",
+        borderWidth: 2,
+        borderColor: "#e94560",
     },
 });
