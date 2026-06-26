@@ -2,7 +2,7 @@ import useFetch from "@/hooks/useFetch";
 import { Image } from "expo-image";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 
 type Product = {
     id: number;
@@ -15,6 +15,8 @@ type Product = {
 
 export default function ProductsScreen () {
     const { products } = useLocalSearchParams<{ products: string }>();
+
+    const router = useRouter();
 
     const { data } = useFetch(
         `https://dummyjson.com/products/category/${products}`
@@ -39,7 +41,12 @@ export default function ProductsScreen () {
     return (
         <SafeAreaView style={styles.container}>
             <Stack.Screen options={{headerShown: false}}/>
-            <Text style={styles.header}>{categoryTitle}</Text>
+            <View style={styles.headerRow}>
+                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                <Text style={styles.backText}>←</Text>
+                </TouchableOpacity>
+                <Text style={styles.header}>{categoryTitle}</Text>
+            </View>
             <FlatList
                 data={productList}
                 renderItem={renderItem}
@@ -62,8 +69,13 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: "bold",
         color: "#ffffff",
+        marginLeft: 12,
+    },
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingTop: 10,
         paddingHorizontal: 20,
-        paddingTop: 16,
         paddingBottom: 8,
     },
     list: {
@@ -106,5 +118,17 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         paddingHorizontal: 10,
         marginTop: 4,
+    },
+    backButton: {
+        backgroundColor: "#16213e",
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    backText: {
+        color: "#ffffff",
+        fontSize: 20,
     },
 });
