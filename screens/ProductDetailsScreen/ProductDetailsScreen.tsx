@@ -3,10 +3,14 @@ import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useCart } from "@/context/CartContext";
+import { useState } from "react";
 
 export default function ProductDetailsScreen() {
     const { productdetails } = useLocalSearchParams<{ productdetails: string }>();
     const router = useRouter();
+    const { addToCart } = useCart();
+    const [quantity, setQuantity] = useState(1);
     const { data: product } = useFetch(`https://dummyjson.com/products/${productdetails}`);
 
     if (!product) return null;
@@ -28,11 +32,17 @@ export default function ProductDetailsScreen() {
                             <Text style={styles.category}>{product.category}</Text>
                         </View>
                         <View style={styles.quantityRow}>
-                            <TouchableOpacity style={styles.quantityButton}>
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+                            >
                                 <Text style={styles.quantityButtonText}>-</Text>
                             </TouchableOpacity>
-                            <Text style={styles.quantityText}>1</Text>
-                            <TouchableOpacity style={styles.quantityButton}>
+                            <Text style={styles.quantityText}>{quantity}</Text>
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={() => setQuantity((q) => q + 1)}
+                            >
                                 <Text style={styles.quantityButtonText}>+</Text>
                             </TouchableOpacity>
                         </View>
@@ -56,9 +66,19 @@ export default function ProductDetailsScreen() {
                     <View style={styles.footer}>
                         <View>
                             <Text style={styles.priceLabel}>Total Price</Text>
-                            <Text style={styles.price}>${product.price}</Text>
+                            <Text style={styles.price}>${(product.price * quantity).toFixed(2)}</Text>
                         </View>
-                        <TouchableOpacity style={styles.addButton}>
+                        <TouchableOpacity style={styles.addButton} onPress={() => {
+                            addToCart({
+                                id: product.id,
+                                title: product.title,
+                                brand: product.brand ?? "N/A",
+                                price: product.price,
+                                thumbnail: product.thumbnail,
+                            }, quantity);
+                            router.push("/(tabs)/basket" as any);
+                        }}
+                        >
                             <Text style={styles.addButtonText}>🛒 Add to cart</Text>
                         </TouchableOpacity>
                     </View>

@@ -1,52 +1,32 @@
+import { useCart } from "@/context/CartContext";
+import { Image } from "expo-image";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-
-type CartItem = {
-    id: number;
-    title: string;
-    brand: string;
-    price: number;
-    quantity: number;
-    thumbnail: string;
-};
-
-const MOCK_CART: CartItem[] = [
-    {
-        id: 1,
-        title: "Calvin Klein CK One",
-        brand: "Calvin Klein",
-        price: 49,
-        quantity: 2,
-        thumbnail: "https://cdn.dummyjson.com/product-images/fragrances/calvin-klein-ck-one/thumbnail.webp",
-    },
-    {
-        id: 2,
-        title: "Chanel Coco Noir",
-        brand: "Chanel",
-        price: 129,
-        quantity: 1,
-        thumbnail: "https://cdn.dummyjson.com/product-images/fragrances/chanel-coco-noir-eau-de/thumbnail.webp",
-    },
-];
-
 
 export default function BasketScreen() {
-    const totalProducts = MOCK_CART.reduce((sum, item) => sum + item.quantity, 0);
-    const totalPrice = MOCK_CART.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const { cartItems, removeFromCart, updateQuantity } = useCart();
 
-    const renderItem = ({ item }: { item: CartItem }) => (
+    const totalProducts = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    const renderItem = ({ item }: { item: (typeof cartItems)[number] }) => (
         <View style={styles.card}>
-            <Image source={{ uri: item.thumbnail }} style={styles.image} resizeMode="cover" />
-            <TouchableOpacity style={styles.deleteButton}>
+            <Image source={{ uri: item.thumbnail }} style={styles.image} contentFit="contain" />
+            <TouchableOpacity style={styles.deleteButton} onPress={() => removeFromCart(item.id)}>
                 <Text style={styles.deleteText}>🗑</Text>
             </TouchableOpacity>
             <View style={styles.quantityRow}>
-                <TouchableOpacity style={styles.quantityButton}>
+                <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => updateQuantity(item.id, item.quantity - 1)}
+                >
                     <Text style={styles.quantityButtonText}>-</Text>
                 </TouchableOpacity>
                 <Text style={styles.quantityText}>{item.quantity}</Text>
-                <TouchableOpacity style={styles.quantityButton}>
+                <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => updateQuantity(item.id, item.quantity + 1)}
+                >
                     <Text style={styles.quantityButtonText}>+</Text>
                 </TouchableOpacity>
             </View>
@@ -60,22 +40,31 @@ export default function BasketScreen() {
         </View>
     );
 
+    if (cartItems.length === 0) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.header}>My Cart</Text>
+                <View style={styles.emptyState}>
+                    <Text style={styles.emptyText}>Your cart is empty</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.header}>My Cart</Text>
-
             <FlatList
-                data={MOCK_CART}
+                data={cartItems}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.list}
                 showsVerticalScrollIndicator={false}
             />
-
             <View style={styles.footer}>
                 <View style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>Products: {totalProducts}</Text>
-                    <Text style={styles.summaryTotal}>Total: ${totalPrice}</Text>
+                    <Text style={styles.summaryTotal}>Total: ${totalPrice.toFixed(2)}</Text>
                 </View>
                 <TouchableOpacity style={styles.checkoutButton}>
                     <Text style={styles.checkoutText}>Proceed to Checkout  →</Text>
@@ -98,6 +87,15 @@ const styles = StyleSheet.create({
         paddingTop: 16,
         paddingBottom: 8,
     },
+    emptyState: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    emptyText: {
+        fontSize: 16,
+        color: "#888",
+    },
     list: {
         paddingHorizontal: 20,
         paddingBottom: 20,
@@ -111,6 +109,7 @@ const styles = StyleSheet.create({
     image: {
         width: "100%",
         height: 180,
+        backgroundColor: "#1a1a2e",
     },
     deleteButton: {
         position: "absolute",
