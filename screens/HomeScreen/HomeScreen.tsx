@@ -1,8 +1,11 @@
 import useFetch from "@/hooks/useFetch";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { FlatList, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AnimatedButton from "@/components/AnimatedButtons";
+import SkeletonCard from "@/components/SkeletonCard";
+
 function capitalize(text: string): string {
     return text
         .split("-")
@@ -21,14 +24,29 @@ export default function HomeScreen() {
         item.toLowerCase().includes(search.toLowerCase())
     ) ?? [];
 
-    const renderItem = ({ item}: { item: any}) => (
-        <TouchableOpacity style={styles.card} activeOpacity={0.7} 
-        onPress={() => router.push(`/home/${item}` as any)}>
+    const renderItem = ({ item }: { item: any }) => (
+        <AnimatedButton
+            style={styles.card}
+            onPress={() => router.push(`/home/${item}` as any)}
+        >
             <Text style={styles.cardText}>{capitalize(item)}</Text>
             <View style={styles.circle} />
-        </TouchableOpacity>
+        </AnimatedButton>
     );
-       
+
+    if (!data) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.header}>Categories</Text>
+                <View style={styles.list}>
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <SkeletonCard key={i} />
+                    ))}
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.header}>Categories</Text>
@@ -74,7 +92,7 @@ const styles = StyleSheet.create({
         paddingVertical: 18,
         paddingHorizontal: 24,
         borderRadius: 50,
-        marginTop: 25,  
+        marginTop: 25,
         borderWidth: 1,
         borderColor: "#0f3460",
         flexDirection: "row",
@@ -97,7 +115,7 @@ const styles = StyleSheet.create({
     searchInput: {
         backgroundColor: "#16213e",
         borderRadius: 50,
-        paddingVertical: 12,
+        paddingVertical: 18,
         paddingHorizontal: 20,
         fontSize: 16,
         color: "#ffffff",
