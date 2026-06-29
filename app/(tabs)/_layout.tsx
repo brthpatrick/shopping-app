@@ -1,9 +1,10 @@
-import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
+import { useCart } from "@/context/CartContext";
+import { Icon, Label, NativeTabs, Badge } from "expo-router/unstable-native-tabs";
 import type { ImageSourcePropType } from "react-native";
 
-const TAB_ICON_SIZE      = 24;
+const TAB_ICON_SIZE = 24;
 
-const LUCIDE_HOME_ICON   = lucideTabIcon(
+const LUCIDE_HOME_ICON = lucideTabIcon(
     "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"
 );
 
@@ -12,6 +13,9 @@ const LUCIDE_BASKET_ICON = lucideTabIcon(
 );
 
 export default function TabLayout() {
+    const { cartItems } = useCart();
+    const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
     return (
         <NativeTabs>
             <NativeTabs.Trigger name="home">
@@ -21,16 +25,16 @@ export default function TabLayout() {
             <NativeTabs.Trigger name="basket">
                 <Label>Basket</Label>
                 <Icon src={LUCIDE_BASKET_ICON} />
+                {cartCount > 0 && <Badge>{cartCount.toString()}</Badge>}
             </NativeTabs.Trigger>
         </NativeTabs>
     );
-}   
+}
 
-// SDK 54 native tabs accept image sources here, not arbitrary Lucide React elements.
 function lucideTabIcon(base64: string): ImageSourcePropType {
     return {
-        uri:    `data:image/png;base64,${base64}`,
-        width:  TAB_ICON_SIZE,
+        uri: `data:image/png;base64,${base64}`,
+        width: TAB_ICON_SIZE,
         height: TAB_ICON_SIZE,
     };
 }

@@ -1,9 +1,9 @@
 import { useCart } from "@/context/CartContext";
+import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather } from "@expo/vector-icons";
 
 export default function BasketScreen() {
     const { cartItems, removeFromCart, updateQuantity } = useCart();
@@ -42,7 +42,7 @@ export default function BasketScreen() {
                     <Text style={styles.title}>{item.title}</Text>
                     <Text style={styles.brand}>{item.brand}</Text>
                 </View>
-                <Text style={styles.price}>${item.price * item.quantity}</Text>
+                <Text style={styles.price}>${(item.price * item.quantity).toFixed(2)}</Text>
             </View>
         </View>
     );
