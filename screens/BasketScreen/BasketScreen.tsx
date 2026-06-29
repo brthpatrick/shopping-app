@@ -73,7 +73,7 @@ export default function BasketScreen() {
                     <Text style={styles.summaryLabel}>Products: {totalProducts}</Text>
                     <Text style={styles.summaryTotal}>Total: ${totalPrice.toFixed(2)}</Text>
                 </View>
-                <TouchableOpacity style={styles.checkoutButton} onPress={() => router.push({ pathname: "/(tabs)/basket/[contact]", relativeToDirectory: true, params: { contact: "form" } } as any)}>
+                <TouchableOpacity style={styles.checkoutButton} onPress={() => router.navigate({ pathname: "/(tabs)/basket/[contact]", relativeToDirectory: true, params: { contact: "form" } } as any)}>
                     <Text style={styles.checkoutText}>Proceed to Checkout  →</Text>
                 </TouchableOpacity>
             </View>

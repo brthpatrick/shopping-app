@@ -27,7 +27,7 @@ export default function HomeScreen() {
     const renderItem = ({ item }: { item: any }) => (
         <AnimatedButton
             style={styles.card}
-            onPress={() => router.push(`/home/${item}` as any)}
+            onPress={() => router.navigate(`/home/${item}` as any)}
         >
             <Text style={styles.cardText}>{capitalize(item)}</Text>
             <View style={styles.circle} />

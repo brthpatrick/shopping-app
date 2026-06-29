@@ -101,7 +101,7 @@ export default function ProductDetailsScreen() {
                                 thumbnail: product.thumbnail,
                                 stock: product.stock,
                             }, displayQuantity);
-                            router.push("/(tabs)/basket" as any);
+                            router.navigate("/(tabs)/basket" as any);
                         }}
                         >
                             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>

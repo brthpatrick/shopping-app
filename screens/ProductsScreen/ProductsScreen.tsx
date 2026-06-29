@@ -32,7 +32,7 @@ export default function ProductsScreen () {
 
     const renderItem = ({ item }: { item: Product }) => (
         <TouchableOpacity style={styles.card} activeOpacity={0.7} 
-            onPress={() => router.push(`/home/${products}/${item.id}` as any)}>
+            onPress={() => router.navigate(`/home/${products}/${item.id}` as any)}>
             <Image source={{ uri: item.thumbnail }} style={styles.image} contentFit="contain" />
             <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
             <Text style={styles.brand}>{item.brand}</Text>

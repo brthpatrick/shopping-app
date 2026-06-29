@@ -18,7 +18,7 @@ export default function ContactScreen() {
             alert("Please fill in all fields");
             return;
         }
-        router.push({
+        router.navigate({
             pathname: "/(tabs)/basket/contact/checkout",
             params: form,
         } as any);
