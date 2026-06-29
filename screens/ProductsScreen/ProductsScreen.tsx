@@ -1,6 +1,6 @@
 import useFetch from "@/hooks/useFetch";
 import { Image } from "expo-image";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons"
@@ -19,7 +19,7 @@ export default function ProductsScreen () {
 
     const router = useRouter();
 
-    const { data } = useFetch(
+    const { data, isLoading, refetch } = useFetch(
         `https://dummyjson.com/products/category/${products}`
     );
 
@@ -57,6 +57,9 @@ export default function ProductsScreen () {
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={styles.list}
                 showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+                }
             />
         </SafeAreaView>
     );

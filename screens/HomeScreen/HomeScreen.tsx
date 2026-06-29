@@ -1,6 +1,7 @@
 import useFetch from "@/hooks/useFetch";
 import { useRouter } from "expo-router";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { FlatList, RefreshControl, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 function capitalize(text: string): string {
     return text
@@ -11,9 +12,14 @@ function capitalize(text: string): string {
 
 export default function HomeScreen() {
 
-    const { data } = useFetch("https://dummyjson.com/products/category-list");
+    const { data, isLoading, refetch } = useFetch("https://dummyjson.com/products/category-list");
 
     const router = useRouter();
+
+    const [search, setSearch] = useState("");
+    const filteredData = data?.filter((item: string) =>
+        item.toLowerCase().includes(search.toLowerCase())
+    ) ?? [];
 
     const renderItem = ({ item}: { item: any}) => (
         <TouchableOpacity style={styles.card} activeOpacity={0.7} 
@@ -26,11 +32,21 @@ export default function HomeScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.header}>Categories</Text>
+            <TextInput
+                style={styles.searchInput}
+                placeholder="Search categories..."
+                placeholderTextColor="#666"
+                value={search}
+                onChangeText={setSearch}
+            />
             <FlatList
-                data={data}
+                data={filteredData}
                 renderItem={renderItem}
                 contentContainerStyle={styles.list}
                 showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+                }
             />
         </SafeAreaView>
     );
@@ -77,5 +93,17 @@ const styles = StyleSheet.create({
         backgroundColor: "#0f3460",
         borderWidth: 2,
         borderColor: "#e94560",
+    },
+    searchInput: {
+        backgroundColor: "#16213e",
+        borderRadius: 50,
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        fontSize: 16,
+        color: "#ffffff",
+        marginHorizontal: 20,
+        marginBottom: 8,
+        borderWidth: 1,
+        borderColor: "#0f3460",
     },
 });

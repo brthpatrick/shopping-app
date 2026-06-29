@@ -3,12 +3,13 @@ import useFetch from "@/hooks/useFetch";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 
 
 export default function ProductDetailsScreen() {
+    const { width } = Dimensions.get("window");
     const { productdetails } = useLocalSearchParams<{ productdetails: string }>();
     const router = useRouter();
     const { addToCart, cartItems } = useCart();
@@ -33,7 +34,16 @@ export default function ProductDetailsScreen() {
                     <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                         <Feather name="arrow-left" size={20} color="#ffffff" />
                     </TouchableOpacity>
-                    <Image source={{ uri: product.thumbnail }} style={styles.image} contentFit="contain" />
+                    <FlatList
+                        data={product.images ?? [product.thumbnail]}
+                        horizontal
+                        pagingEnabled
+                        showsHorizontalScrollIndicator={false}
+                        keyExtractor={(_, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <Image source={{ uri: item }} style={[styles.image, { width }]} contentFit="contain" />
+                        )}
+                    />
                 </View>
                 <View style={styles.content}>
                     <View style={styles.titleRow}>
@@ -173,7 +183,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     image: {
-        width: "100%",
         height: 300,
         backgroundColor: "#1a1a2e",
     },
