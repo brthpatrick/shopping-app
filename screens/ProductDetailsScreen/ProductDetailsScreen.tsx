@@ -1,17 +1,26 @@
 import { useCart } from "@/context/CartContext";
 import useFetch from "@/hooks/useFetch";
 import { Image } from "expo-image";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
+import { useState, useCallback } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProductDetailsScreen() {
     const { productdetails } = useLocalSearchParams<{ productdetails: string }>();
     const router = useRouter();
-    const { addToCart } = useCart();
-    const [quantity, setQuantity] = useState(1);
+    const { addToCart, cartItems } = useCart();
     const { data: product } = useFetch(`https://dummyjson.com/products/${productdetails}`);
+    const [quantity, setQuantity] = useState<number | null>(null);
+    const inCart = cartItems.find((item) => item.id === product?.id)?.quantity ?? 0;
+    const displayQuantity = quantity ?? (inCart || 1);
+
+    useFocusEffect(
+        useCallback(() => {
+            setQuantity(null);
+        }, [])
+    );
+
 
     if (!product) return null;
 
@@ -24,7 +33,6 @@ export default function ProductDetailsScreen() {
                     </TouchableOpacity>
                     <Image source={{ uri: product.thumbnail }} style={styles.image} contentFit="contain" />
                 </View>
-
                 <View style={styles.content}>
                     <View style={styles.titleRow}>
                         <View style={{ flex: 1 }}>
@@ -34,19 +42,18 @@ export default function ProductDetailsScreen() {
                         <View style={styles.quantityRow}>
                             <TouchableOpacity
                                 style={styles.quantityButton}
-                                onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+                                onPress={() => setQuantity(Math.max(1, displayQuantity - 1))}
                             >
                                 <Text style={styles.quantityButtonText}>-</Text>
                             </TouchableOpacity>
-                            <Text style={styles.quantityText}>{quantity}</Text>
+                            <Text style={styles.quantityText}>{displayQuantity}</Text>
                             <TouchableOpacity
                                 style={styles.quantityButton}
-                                onPress={() => setQuantity((q) => { 
-                                    if (q < product.stock) {
-                                        return q + 1; 
+                                onPress={() => {
+                                    if (displayQuantity < product.stock) {
+                                        setQuantity(displayQuantity + 1);
                                     }
-                                    return q;
-                                })}
+                                }}
                             >
                                 <Text style={styles.quantityButtonText}>+</Text>
                             </TouchableOpacity>
@@ -71,7 +78,7 @@ export default function ProductDetailsScreen() {
                     <View style={styles.footer}>
                         <View>
                             <Text style={styles.priceLabel}>Total Price</Text>
-                            <Text style={styles.price}>${(product.price * quantity).toFixed(2)}</Text>
+                            <Text style={styles.price}>${(product.price * displayQuantity).toFixed(2)}</Text>
                         </View>
                         <TouchableOpacity style={styles.addButton} onPress={() => {
                             addToCart({
@@ -80,7 +87,8 @@ export default function ProductDetailsScreen() {
                                 brand: product.brand ?? "N/A",
                                 price: product.price,
                                 thumbnail: product.thumbnail,
-                            }, quantity);
+                                stock: product.stock,
+                            }, displayQuantity);
                             router.push("/(tabs)/basket" as any);
                         }}
                         >

@@ -7,6 +7,7 @@ type CartItem = {
     price: number;
     quantity: number;
     thumbnail: string;
+    stock: number;
 };
 
 type CartContextType = {
@@ -32,14 +33,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             if (existing) {
                 return prev.map((item) =>
                     item.id === product.id
-                        ? { ...item, quantity: item.quantity + quantity }
+                        ? { ...item, quantity }
                         : item
                 );
             }
             return [...prev, { ...product, quantity }];
         });
     };
-
 
     const removeFromCart = (id: number) => {
         setCartItems((prev) => prev.filter((item) => item.id !== id));
