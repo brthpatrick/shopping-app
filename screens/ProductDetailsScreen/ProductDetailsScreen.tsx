@@ -105,7 +105,7 @@ export default function ProductDetailsScreen() {
                                 id: product.id,
                                 title: product.title,
                                 brand: product.brand ?? "N/A",
-                                price: product.price,
+                                price: Math.round(product.price * (1 - product.discountPercentage / 100) * 100) / 100,
                                 thumbnail: product.thumbnail,
                                 stock: product.stock,
                             }, displayQuantity);
