@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-
+import { Feather } from "@expo/vector-icons"
 type Product = {
     id: number;
     title: string;
@@ -45,7 +45,7 @@ export default function ProductsScreen () {
             <Stack.Screen options={{headerShown: false}}/>
             <View style={styles.headerRow}>
                 <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                <Text style={styles.backText}>←</Text>
+                    <Feather name="arrow-left" size={20} color="#ffffff" />
                 </TouchableOpacity>
                 <Text style={styles.header}>{categoryTitle}</Text>
             </View>
@@ -127,9 +127,5 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         justifyContent: "center",
         alignItems: "center",
-    },
-    backText: {
-        color: "#ffffff",
-        fontSize: 20,
     },
 });

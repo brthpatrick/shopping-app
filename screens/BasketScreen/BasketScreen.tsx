@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Feather } from "@expo/vector-icons";
 
 export default function BasketScreen() {
     const { cartItems, removeFromCart, updateQuantity } = useCart();
@@ -15,14 +16,14 @@ export default function BasketScreen() {
         <View style={styles.card}>
             <Image source={{ uri: item.thumbnail }} style={styles.image} contentFit="contain" />
             <TouchableOpacity style={styles.deleteButton} onPress={() => removeFromCart(item.id)}>
-                <Text style={styles.deleteText}>🗑</Text>
+                <Feather name="trash-2" size={18} color="#e94560" />
             </TouchableOpacity>
             <View style={styles.quantityRow}>
                 <TouchableOpacity
                     style={styles.quantityButton}
                     onPress={() => updateQuantity(item.id, item.quantity - 1)}
                 >
-                    <Text style={styles.quantityButtonText}>-</Text>
+                    <Feather name="minus" size={16} color="#ffffff" />
                 </TouchableOpacity>
                 <Text style={styles.quantityText}>{item.quantity}</Text>
                 <TouchableOpacity
@@ -33,7 +34,7 @@ export default function BasketScreen() {
                         }
                     }}
                 >
-                    <Text style={styles.quantityButtonText}>+</Text>
+                    <Feather name="plus" size={16} color="#ffffff" />
                 </TouchableOpacity>
             </View>
             <View style={styles.infoRow}>

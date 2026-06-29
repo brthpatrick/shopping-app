@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Feather } from "@expo/vector-icons";
 
 export default function CheckoutScreen() {
     const router = useRouter();
@@ -33,7 +34,7 @@ export default function CheckoutScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                <Text style={styles.backText}>←</Text>
+                <Feather name="arrow-left" size={20} color="#ffffff" />
             </TouchableOpacity>
             <Text style={styles.header}>Delivery Address</Text>
 

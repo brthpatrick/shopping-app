@@ -5,6 +5,8 @@ import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Feather } from "@expo/vector-icons";
+
 
 export default function ProductDetailsScreen() {
     const { productdetails } = useLocalSearchParams<{ productdetails: string }>();
@@ -29,7 +31,7 @@ export default function ProductDetailsScreen() {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.imageContainer}>
                     <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                        <Text style={styles.backText}>←</Text>
+                        <Feather name="arrow-left" size={20} color="#ffffff" />
                     </TouchableOpacity>
                     <Image source={{ uri: product.thumbnail }} style={styles.image} contentFit="contain" />
                 </View>
@@ -44,7 +46,7 @@ export default function ProductDetailsScreen() {
                                 style={styles.quantityButton}
                                 onPress={() => setQuantity(Math.max(1, displayQuantity - 1))}
                             >
-                                <Text style={styles.quantityButtonText}>-</Text>
+                                <Feather name="minus" size={16} color="#ffffff" />
                             </TouchableOpacity>
                             <Text style={styles.quantityText}>{displayQuantity}</Text>
                             <TouchableOpacity
@@ -55,7 +57,7 @@ export default function ProductDetailsScreen() {
                                     }
                                 }}
                             >
-                                <Text style={styles.quantityButtonText}>+</Text>
+                                <Feather name="plus" size={16} color="#ffffff" />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -92,7 +94,10 @@ export default function ProductDetailsScreen() {
                             router.push("/(tabs)/basket" as any);
                         }}
                         >
-                            <Text style={styles.addButtonText}>🛒 Add to cart</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                                <Feather name="shopping-cart" size={18} color="#ffffff" />
+                                <Text style={styles.addButtonText}>Add to cart</Text>
+                            </View>
                         </TouchableOpacity>
                     </View>
                 </View>
