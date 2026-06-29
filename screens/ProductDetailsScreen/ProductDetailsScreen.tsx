@@ -3,7 +3,7 @@ import useFetch from "@/hooks/useFetch";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, FlatList, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 
@@ -17,6 +17,7 @@ export default function ProductDetailsScreen() {
     const [quantity, setQuantity] = useState<number | null>(null);
     const inCart = cartItems.find((item) => item.id === product?.id)?.quantity ?? 0;
     const displayQuantity = quantity ?? (inCart || 1);
+    const [showReviews, setShowReviews] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -76,10 +77,10 @@ export default function ProductDetailsScreen() {
                         {product.stock > 0 ? "Available in stock" : "Out of stock"}
                     </Text>
 
-                    <View style={styles.ratingRow}>
+                    <TouchableOpacity style={styles.ratingRow} onPress={() => setShowReviews(true)}>
                         <StarRating rating={product.rating} />
-                        <Text style={styles.ratingText}>{product.rating} (Reviews Score)</Text>
-                    </View>
+                        <Text style={styles.ratingText}>{product.rating} (Reviews Score) →</Text>
+                    </TouchableOpacity>
 
                     <Text style={styles.sectionTitle}>Brand</Text>
                     <Text style={styles.sectionValue}>{product.brand ?? "N/A"}</Text>
@@ -90,7 +91,14 @@ export default function ProductDetailsScreen() {
                     <View style={styles.footer}>
                         <View>
                             <Text style={styles.priceLabel}>Total Price</Text>
-                            <Text style={styles.price}>${(product.price * displayQuantity).toFixed(2)}</Text>
+                            {product.discountPercentage > 0 && (
+                                <Text style={styles.originalPrice}>
+                                    ${(product.price * displayQuantity).toFixed(2)}
+                                </Text>
+                            )}
+                            <Text style={styles.price}>
+                                ${(product.price * (1 - product.discountPercentage / 100) * displayQuantity).toFixed(2)}
+                            </Text>
                         </View>
                         <TouchableOpacity style={styles.addButton} onPress={() => {
                             addToCart({
@@ -111,6 +119,33 @@ export default function ProductDetailsScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <Modal visible={showReviews} transparent animationType="slide">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.reviewModal}>
+                            <View style={styles.reviewModalHeader}>
+                                <Text style={styles.reviewModalTitle}>Reviews</Text>
+                                <TouchableOpacity onPress={() => setShowReviews(false)}>
+                                    <Feather name="x" size={24} color="#ffffff" />
+                                </TouchableOpacity>
+                            </View>
+                            <ScrollView showsVerticalScrollIndicator={false}>
+                                {(product.reviews ?? []).map((review: any, index: number) => (
+                                    <View key={index} style={styles.reviewCard}>
+                                        <View style={styles.reviewHeader}>
+                                            <Text style={styles.reviewerName}>{review.reviewerName}</Text>
+                                            <StarRating rating={review.rating} />
+                                        </View>
+                                        <Text style={styles.reviewComment}>{review.comment}</Text>
+                                        <Text style={styles.reviewDate}>
+                                            {new Date(review.date).toLocaleDateString()}
+                                        </Text>
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    </View>
+                </Modal>
+
             </ScrollView>
         </SafeAreaView>
     );
@@ -289,6 +324,63 @@ const styles = StyleSheet.create({
     addButtonText: {
         color: "#ffffff",
         fontSize: 16,
+        fontWeight: "bold",
+    },
+    originalPrice: {
+        color: "#888",
+        fontSize: 14,
+        textDecorationLine: "line-through",
+    },
+    reviewCard: {
+        backgroundColor: "#1a1a2e",
+        borderRadius: 12,
+        padding: 14,
+        marginTop: 10,
+    },
+    reviewHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    reviewerName: {
+        color: "#ffffff",
+        fontSize: 14,
+        fontWeight: "bold",
+    },
+    reviewRating: {
+        flexDirection: "row",
+    },
+    reviewComment: {
+        color: "#ccc",
+        fontSize: 13,
+        marginTop: 6,
+    },
+    reviewDate: {
+        color: "#666",
+        fontSize: 11,
+        marginTop: 6,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.6)",
+        justifyContent: "flex-end",
+    },
+    reviewModal: {
+        backgroundColor: "#16213e",
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+        padding: 20,
+        maxHeight: "70%",
+    },
+    reviewModalHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    reviewModalTitle: {
+        color: "#ffffff",
+        fontSize: 22,
         fontWeight: "bold",
     },
 });
