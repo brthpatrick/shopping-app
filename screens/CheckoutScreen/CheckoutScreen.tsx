@@ -33,11 +33,12 @@ export default function CheckoutScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                <Feather name="arrow-left" size={20} color="#ffffff" />
-            </TouchableOpacity>
-            <Text style={styles.header}>Delivery Address</Text>
-
+            <View style={styles.headerRow}>
+                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                    <Feather name="arrow-left" size={20} color="#ffffff" />
+                </TouchableOpacity>
+                <Text style={styles.header}>Delivery Address</Text>
+            </View>
             <View style={styles.addressCard}>
                 <Text style={styles.addressLine}>Full Name: <Text style={styles.addressValue}>{fullName}</Text></Text>
                 <Text style={styles.addressLine}>Phone Number: <Text style={styles.addressValue}>{phone}</Text></Text>
@@ -90,9 +91,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#1a1a2e",
     },
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 20,
+        paddingTop: 10,
+        paddingBottom: 8,
+    },
     backButton: {
-        marginLeft: 20,
-        marginTop: 10,
         backgroundColor: "#16213e",
         width: 40,
         height: 40,
@@ -108,9 +114,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: "bold",
         color: "#ffffff",
-        paddingHorizontal: 20,
-        paddingTop: 12,
-        paddingBottom: 12,
+        marginLeft: 12,
     },
     addressCard: {
         backgroundColor: "#16213e",
