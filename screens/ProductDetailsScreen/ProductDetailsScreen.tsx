@@ -1,10 +1,10 @@
+import { useCart } from "@/context/CartContext";
 import useFetch from "@/hooks/useFetch";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useCart } from "@/context/CartContext";
-import { useState } from "react";
 
 export default function ProductDetailsScreen() {
     const { productdetails } = useLocalSearchParams<{ productdetails: string }>();
@@ -41,7 +41,12 @@ export default function ProductDetailsScreen() {
                             <Text style={styles.quantityText}>{quantity}</Text>
                             <TouchableOpacity
                                 style={styles.quantityButton}
-                                onPress={() => setQuantity((q) => q + 1)}
+                                onPress={() => setQuantity((q) => { 
+                                    if (q < product.stock) {
+                                        return q + 1; 
+                                    }
+                                    return q;
+                                })}
                             >
                                 <Text style={styles.quantityButtonText}>+</Text>
                             </TouchableOpacity>

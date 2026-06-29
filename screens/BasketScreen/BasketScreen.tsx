@@ -1,10 +1,12 @@
 import { useCart } from "@/context/CartContext";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function BasketScreen() {
     const { cartItems, removeFromCart, updateQuantity } = useCart();
+    const router = useRouter();
 
     const totalProducts = cartItems.reduce((sum, item) => sum + item.quantity, 0);
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -66,7 +68,7 @@ export default function BasketScreen() {
                     <Text style={styles.summaryLabel}>Products: {totalProducts}</Text>
                     <Text style={styles.summaryTotal}>Total: ${totalPrice.toFixed(2)}</Text>
                 </View>
-                <TouchableOpacity style={styles.checkoutButton}>
+                <TouchableOpacity style={styles.checkoutButton} onPress={() => router.push({ pathname: "/(tabs)/basket/[contact]", relativeToDirectory: true, params: { contact: "form" } } as any)}>
                     <Text style={styles.checkoutText}>Proceed to Checkout  →</Text>
                 </TouchableOpacity>
             </View>
