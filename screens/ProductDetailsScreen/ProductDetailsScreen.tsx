@@ -1,4 +1,5 @@
 import { useCart } from "@/context/CartContext";
+import { useFavorites } from "@/context/FavoritesContext";
 import useFetch from "@/hooks/useFetch";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
@@ -6,6 +7,7 @@ import { useState, useCallback } from "react";
 import { Dimensions, FlatList, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import Toast from "@/components/Toast";
 
 
 export default function ProductDetailsScreen() {
@@ -14,6 +16,9 @@ export default function ProductDetailsScreen() {
     const router = useRouter();
     const { addToCart, cartItems } = useCart();
     const { data: product } = useFetch(`https://dummyjson.com/products/${productdetails}`);
+    const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+    const [toast, setToast] = useState(false);
+    const favorited = product ? isFavorite(product.id) : false;
     const [quantity, setQuantity] = useState<number | null>(null);
     const inCart = cartItems.find((item) => item.id === product?.id)?.quantity ?? 0;
     const displayQuantity = quantity ?? (inCart || 1);
@@ -34,6 +39,28 @@ export default function ProductDetailsScreen() {
                 <View style={styles.imageContainer}>
                     <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
                         <Feather name="arrow-left" size={20} color="#ffffff" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.heartButton}
+                        onPress={() => {
+                            if (!product) return;
+                            if (favorited) {
+                                removeFavorite(product.id);
+                            } else {
+                                addFavorite({
+                                    id: product.id,
+                                    title: product.title,
+                                    brand: product.brand ?? "N/A",
+                                    price: product.price,
+                                    thumbnail: product.thumbnail,
+                                    discountPercentage: product.discountPercentage,
+                                    rating: product.rating,
+                                    category: product.category,
+                                });
+                            }
+                        }}
+                    >
+                        <Feather name="heart" size={20} color={favorited ? "#e94560" : "#ffffff"} />
                     </TouchableOpacity>
                     <FlatList
                         data={product.images ?? [product.thumbnail]}
@@ -109,7 +136,7 @@ export default function ProductDetailsScreen() {
                                 thumbnail: product.thumbnail,
                                 stock: product.stock,
                             }, displayQuantity);
-                            router.navigate("/(tabs)/basket" as any);
+                            setToast(true);
                         }}
                         >
                             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -147,6 +174,7 @@ export default function ProductDetailsScreen() {
                 </Modal>
 
             </ScrollView>
+            <Toast message="Added to cart!" visible={toast} onHide={() => setToast(false)} />
         </SafeAreaView>
     );
 }
@@ -382,5 +410,17 @@ const styles = StyleSheet.create({
         color: "#ffffff",
         fontSize: 22,
         fontWeight: "bold",
+    },
+    heartButton: {
+        position: "absolute",
+        top: 10,
+        right: 20,
+        zIndex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });

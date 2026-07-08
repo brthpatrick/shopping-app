@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react";
 import { Animated, StyleSheet } from "react-native";
 
-export default function SkeletonCard() {
+type SkeletonCardProps = {
+    variant?: "category" | "product";
+};
+
+export default function SkeletonCard({ variant = "category" }: SkeletonCardProps) {
     const opacity = useRef(new Animated.Value(0.3)).current;
 
     useEffect(() => {
@@ -16,13 +20,21 @@ export default function SkeletonCard() {
     }, [opacity]);
 
     return (
-        <Animated.View style={[styles.card, { opacity }]} />
+        <Animated.View style={[styles.base, variant === "product" ? styles.product : styles.category, { opacity }]} />
     );
 }
 
 const styles = StyleSheet.create({
-    card: {
+    base: {
         backgroundColor: "#16213e",
+    },
+    product: {
+        height: 180,
+        borderRadius: 16,
+        marginTop: 16,
+        width: "48%",
+    },
+    category: {
         height: 56,
         borderRadius: 50,
         marginTop: 20,
