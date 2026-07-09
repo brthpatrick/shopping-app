@@ -61,7 +61,9 @@ export default function CheckoutScreen() {
                     <Text style={styles.totalLabel}>Total Price</Text>
                     <Text style={styles.totalPrice}>${totalPrice.toFixed(2)}</Text>
                 </View>
-                <TouchableOpacity style={styles.orderButton} onPress={() => setOrderSent(true)}>
+                <TouchableOpacity style={styles.orderButton} onPress={() => { cartItems.forEach((item) => removeFromCart(item.id));
+                    setOrderSent(true);
+                }}>
                     <Text style={styles.orderButtonText}>Place Order</Text>
                 </TouchableOpacity>
             </View>
@@ -78,7 +80,7 @@ export default function CheckoutScreen() {
                             onPress={() => {
                                 setOrderSent(false);
                                 cartItems.forEach((item) => removeFromCart(item.id));
-                                router.push("/(tabs)/home" as any);
+                                router.navigate("/(tabs)/home" as any);
                             }}
                         >
                             <Text style={styles.modalButtonText}>Back to Home</Text>
@@ -86,7 +88,7 @@ export default function CheckoutScreen() {
                     </View>
                 </View>
             </Modal>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }
 
