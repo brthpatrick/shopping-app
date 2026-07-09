@@ -76,7 +76,9 @@ export default function SearchScreen() {
             )}
 
             <FlatList
-                data={results}
+                data={results.filter(item =>
+                    item.title.toLowerCase().includes(query.toLowerCase()) 
+                )}
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.list}
                 showsVerticalScrollIndicator={false}
