@@ -79,7 +79,6 @@ export default function CheckoutScreen() {
                             style={styles.modalButton}
                             onPress={() => {
                                 setOrderSent(false);
-                                cartItems.forEach((item) => removeFromCart(item.id));
                                 router.navigate("/(tabs)/home" as any);
                             }}
                         >
