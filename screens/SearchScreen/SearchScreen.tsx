@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         borderWidth: 1, borderColor: "#0f3460",
     },
     image: { width: 80, height: 80, backgroundColor: "#1a1a2e" },
-    info: { flex: 1, padding: 12, justifyContent: "center" },
+    info: { flex: 1, padding: 12, paddingRight: 52,justifyContent: "center" },
     title: { color: "#ffffff", fontSize: 14, fontWeight: "bold" },
     brand: { color: "#888", fontSize: 12, marginTop: 2 },
     price: { color: "#e94560", fontSize: 15, fontWeight: "bold", marginTop: 4 },

@@ -1,10 +1,10 @@
+import AnimatedButton from "@/components/AnimatedButtons";
+import SkeletonCard from "@/components/SkeletonCard";
 import useFetch from "@/hooks/useFetch";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AnimatedButton from "@/components/AnimatedButtons";
-import SkeletonCard from "@/components/SkeletonCard";
 
 function capitalize(text: string): string {
     return text
@@ -14,12 +14,10 @@ function capitalize(text: string): string {
 }
 
 export default function HomeScreen() {
-
     const { data, isLoading, refetch } = useFetch("https://dummyjson.com/products/category-list");
-
     const router = useRouter();
-
     const [search, setSearch] = useState("");
+
     const filteredData = data?.filter((item: string) =>
         item.toLowerCase().includes(search.toLowerCase())
     ) ?? [];
@@ -74,6 +72,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#1a1a2e",
+        marginBottom: 49,
     },
     header: {
         fontSize: 28,
