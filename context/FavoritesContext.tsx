@@ -15,6 +15,7 @@ type FavoritesContextType = {
     favorites: FavoriteItem[];
     addFavorite: (item: FavoriteItem) => void;
     removeFavorite: (id: number) => void;
+    clearFavorites: () => void;
     isFavorite: (id: number) => boolean;
 };
 
@@ -22,6 +23,7 @@ const FavoritesContext = createContext<FavoritesContextType>({
     favorites: [],
     addFavorite: () => {},
     removeFavorite: () => {},
+    clearFavorites: () => {},
     isFavorite: () => false,
 });
 
@@ -36,13 +38,15 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     };
 
     const removeFavorite = (id: number) => {
-        setFavorites((prev) => prev.filter((item) => item.id !== id));
+        setFavorites((prev) => prev.filter((f) => f.id !== id));
     };
 
-    const isFavorite = (id: number) => favorites.some((item) => item.id === id);
+    const clearFavorites = () => setFavorites([]);
+
+    const isFavorite = (id: number) => favorites.some((f) => f.id === id);
 
     return (
-        <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite, isFavorite }}>
+        <FavoritesContext.Provider value={{ favorites, addFavorite, removeFavorite, clearFavorites, isFavorite }}>
             {children}
         </FavoritesContext.Provider>
     );

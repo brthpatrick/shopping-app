@@ -6,65 +6,74 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FavoritesScreen() {
-    const { favorites, removeFavorite } = useFavorites();
+    const { favorites, removeFavorite, clearFavorites } = useFavorites();
     const router = useRouter();
 
-    if (favorites.length === 0) {
-        return (
-            <SafeAreaView style={styles.container}>
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.headerRow}>
                 <Text style={styles.header}>Favorites</Text>
+                {favorites.length > 0 && (
+                    <TouchableOpacity onPress={clearFavorites}>
+                        <Text style={styles.clearText}>Clear all</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
+
+            {favorites.length === 0 ? (
                 <View style={styles.emptyState}>
                     <Feather name="heart" size={52} color="#333" />
                     <Text style={styles.emptyTitle}>No favorites yet</Text>
                     <Text style={styles.emptySubText}>Tap the heart on a product to save it</Text>
                 </View>
-            </SafeAreaView>
-        );
-    }
-
-    return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.header}>Favorites</Text>
-            <FlatList
-                data={favorites}
-                keyExtractor={(item) => item.id.toString()}
-                numColumns={2}
-                columnWrapperStyle={styles.row}
-                contentContainerStyle={styles.list}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={styles.card}
-                        activeOpacity={0.7}
-                        onPress={() => router.navigate(`/home/${item.category}/${item.id}` as any)}
-                    >
-                        <Image source={{ uri: item.thumbnail }} style={styles.image} contentFit="contain" />
-                        <TouchableOpacity style={styles.heartButton} onPress={() => removeFavorite(item.id)}>
-                            <Feather name="heart" size={16} color="#e94560" />
+            ) : (
+                <FlatList
+                    data={favorites}
+                    keyExtractor={(item) => item.id.toString()}
+                    numColumns={2}
+                    columnWrapperStyle={styles.row}
+                    contentContainerStyle={styles.list}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity
+                            style={styles.card}
+                            activeOpacity={0.7}
+                            onPress={() => router.navigate(`/home/${item.category}/${item.id}` as any)}
+                        >
+                            <Image source={{ uri: item.thumbnail }} style={styles.image} contentFit="contain" />
+                            <TouchableOpacity style={styles.heartButton} onPress={() => removeFavorite(item.id)}>
+                                <Feather name="heart" size={16} color="#e94560" />
+                            </TouchableOpacity>
+                            {item.discountPercentage > 0 && (
+                                <View style={styles.badge}>
+                                    <Text style={styles.badgeText}>-{Math.round(item.discountPercentage)}%</Text>
+                                </View>
+                            )}
+                            <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+                            <Text style={styles.brand}>{item.brand ?? "N/A"}</Text>
+                            <Text style={styles.price}>
+                                ${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}
+                            </Text>
                         </TouchableOpacity>
-                        {item.discountPercentage > 0 && (
-                            <View style={styles.badge}>
-                                <Text style={styles.badgeText}>-{Math.round(item.discountPercentage)}%</Text>
-                            </View>
-                        )}
-                        <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                        <Text style={styles.brand}>{item.brand ?? "N/A"}</Text>
-                        <Text style={styles.price}>
-                            ${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}
-                        </Text>
-                    </TouchableOpacity>
-                )}
-            />
+                    )}
+                />
+            )}
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "#1a1a2e" },
-    header: {
-        fontSize: 28, fontWeight: "bold", color: "#ffffff",
-        paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8,
+    headerRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: 20,
+        paddingTop: 16,
+        paddingBottom: 8,
     },
+    header: { fontSize: 28, fontWeight: "bold", color: "#ffffff" },
+    clearText: { color: "#e94560", fontSize: 14, fontWeight: "600" },
     emptyState: { flex: 1, justifyContent: "center", alignItems: "center", gap: 14 },
     emptyTitle: { fontSize: 18, color: "#888", fontWeight: "bold" },
     emptySubText: { fontSize: 14, color: "#555", textAlign: "center", paddingHorizontal: 40 },

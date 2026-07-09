@@ -1,10 +1,10 @@
 import { useCart } from "@/context/CartContext";
+import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather } from "@expo/vector-icons";
 
 export default function CheckoutScreen() {
     const router = useRouter();
@@ -15,8 +15,9 @@ export default function CheckoutScreen() {
         city: string;
         address: string;
     }>();
-    const { cartItems, removeFromCart, updateQuantity } = useCart();
+    const { cartItems, removeFromCart } = useCart();
     const [orderSent, setOrderSent] = useState(false);
+    const [orderNumber] = useState(() => `#TM-${Math.floor(10000 + Math.random() * 90000)}`);
 
     const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -68,7 +69,10 @@ export default function CheckoutScreen() {
             <Modal visible={orderSent} transparent animationType="fade">
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalText}>Your Order has been sent</Text>
+                        <Feather name="check-circle" size={64} color="#4CAF50" />
+                        <Text style={styles.modalTitle}>Order Confirmed!</Text>
+                        <Text style={styles.modalOrderNum}>{orderNumber}</Text>
+                        <Text style={styles.modalText}>Your order has been placed successfully.</Text>
                         <TouchableOpacity
                             style={styles.modalButton}
                             onPress={() => {
@@ -77,7 +81,7 @@ export default function CheckoutScreen() {
                                 router.push("/(tabs)/home" as any);
                             }}
                         >
-                            <Text style={styles.modalButtonText}>Go Back</Text>
+                            <Text style={styles.modalButtonText}>Back to Home</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -87,151 +91,62 @@ export default function CheckoutScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#1a1a2e",
-    },
+    container: { flex: 1, backgroundColor: "#1a1a2e" },
     headerRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        paddingTop: 10,
-        paddingBottom: 8,
+        flexDirection: "row", alignItems: "center",
+        paddingHorizontal: 20, paddingTop: 10, paddingBottom: 8,
     },
     backButton: {
-        backgroundColor: "#16213e",
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: "#16213e", width: 40, height: 40,
+        borderRadius: 20, justifyContent: "center", alignItems: "center",
     },
-    backText: {
-        color: "#ffffff",
-        fontSize: 20,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: "bold",
-        color: "#ffffff",
-        marginLeft: 12,
-    },
+    header: { fontSize: 24, fontWeight: "bold", color: "#ffffff", marginLeft: 12 },
     addressCard: {
-        backgroundColor: "#16213e",
-        marginHorizontal: 20,
-        borderRadius: 12,
-        padding: 16,
-        gap: 8,
-        borderWidth: 1,
-        borderColor: "#0f3460",
+        backgroundColor: "#16213e", marginHorizontal: 20,
+        borderRadius: 12, padding: 16, gap: 8,
+        borderWidth: 1, borderColor: "#0f3460",
     },
-    addressLine: {
-        color: "#888",
-        fontSize: 14,
-    },
-    addressValue: {
-        color: "#ffffff",
-        fontWeight: "bold",
-    },
-    list: {
-        paddingHorizontal: 20,
-        paddingTop: 12,
-        paddingBottom: 12,
-    },
+    addressLine: { color: "#888", fontSize: 14 },
+    addressValue: { color: "#ffffff", fontWeight: "bold" },
+    list: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 12 },
     productCard: {
-        flexDirection: "row",
-        backgroundColor: "#16213e",
-        borderRadius: 12,
-        marginTop: 10,
-        overflow: "hidden",
-        borderWidth: 1,
-        borderColor: "#0f3460",
+        flexDirection: "row", backgroundColor: "#16213e",
+        borderRadius: 12, marginTop: 10, overflow: "hidden",
+        borderWidth: 1, borderColor: "#0f3460",
     },
-    productImage: {
-        width: 80,
-        height: 80,
-        backgroundColor: "#1a1a2e",
-    },
-    productInfo: {
-        flex: 1,
-        padding: 12,
-    },
-    productTitle: {
-        color: "#ffffff",
-        fontSize: 14,
-        fontWeight: "bold",
-    },
-    productBrand: {
-        color: "#888",
-        fontSize: 12,
-        marginTop: 2,
-    },
-    productPrice: {
-        color: "#e94560",
-        fontSize: 16,
-        fontWeight: "bold",
-        marginTop: 4,
-    },
+    productImage: { width: 80, height: 80, backgroundColor: "#1a1a2e" },
+    productInfo: { flex: 1, padding: 12 },
+    productTitle: { color: "#ffffff", fontSize: 14, fontWeight: "bold" },
+    productBrand: { color: "#888", fontSize: 12, marginTop: 2 },
+    productPrice: { color: "#e94560", fontSize: 16, fontWeight: "bold", marginTop: 4 },
     footer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        paddingBottom: 50,
-        paddingTop: 12,
-        borderTopWidth: 1,
-        borderTopColor: "#0f3460",
+        flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+        paddingHorizontal: 20, paddingBottom: 50, paddingTop: 12,
+        borderTopWidth: 1, borderTopColor: "#0f3460",
     },
-    totalLabel: {
-        color: "#888",
-        fontSize: 12,
-    },
-    totalPrice: {
-        color: "#e94560",
-        fontSize: 24,
-        fontWeight: "bold",
-    },
+    totalLabel: { color: "#888", fontSize: 12 },
+    totalPrice: { color: "#e94560", fontSize: 24, fontWeight: "bold" },
     orderButton: {
-        backgroundColor: "#e94560",
-        borderRadius: 50,
-        paddingVertical: 14,
-        paddingHorizontal: 28,
+        backgroundColor: "#e94560", borderRadius: 50,
+        paddingVertical: 14, paddingHorizontal: 28,
     },
-    orderButtonText: {
-        color: "#ffffff",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
+    orderButtonText: { color: "#ffffff", fontSize: 16, fontWeight: "bold" },
     modalOverlay: {
-        flex: 1,
-        backgroundColor: "rgba(0,0,0,0.6)",
-        justifyContent: "center",
-        alignItems: "center",
+        flex: 1, backgroundColor: "rgba(0,0,0,0.6)",
+        justifyContent: "center", alignItems: "center",
     },
     modalContent: {
-        backgroundColor: "#16213e",
-        borderRadius: 16,
-        padding: 30,
-        alignItems: "center",
-        marginHorizontal: 40,
-        borderWidth: 1,
-        borderColor: "#0f3460",
+        backgroundColor: "#16213e", borderRadius: 20,
+        padding: 32, alignItems: "center",
+        marginHorizontal: 32, gap: 12,
+        borderWidth: 1, borderColor: "#0f3460",
     },
-    modalText: {
-        color: "#ffffff",
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 20,
-    },
+    modalTitle: { color: "#ffffff", fontSize: 22, fontWeight: "bold" },
+    modalOrderNum: { color: "#e94560", fontSize: 16, fontWeight: "bold" },
+    modalText: { color: "#888", fontSize: 14, textAlign: "center" },
     modalButton: {
-        backgroundColor: "#e94560",
-        borderRadius: 50,
-        paddingVertical: 12,
-        paddingHorizontal: 32,
+        backgroundColor: "#e94560", borderRadius: 50,
+        paddingVertical: 12, paddingHorizontal: 32, marginTop: 8,
     },
-    modalButtonText: {
-        color: "#ffffff",
-        fontSize: 16,
-        fontWeight: "bold",
-    },
+    modalButtonText: { color: "#ffffff", fontSize: 16, fontWeight: "bold" },
 });

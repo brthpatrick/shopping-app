@@ -60,7 +60,7 @@ export default function ProductsScreen() {
             )}
             <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
             <Text style={styles.brand}>{item.brand}</Text>
-            <Text style={styles.price}>${item.price}</Text>
+            <Text style={styles.price}>${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}</Text>
         </TouchableOpacity>
     );
 

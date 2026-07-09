@@ -1,8 +1,9 @@
+import SkeletonCard from "@/components/SkeletonCard";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 type Product = {
@@ -41,6 +42,10 @@ export default function SearchScreen() {
         return () => clearTimeout(timeout);
     }, [query]);
 
+    const filtered = results.filter(item =>
+        item.title.toLowerCase().includes(query.toLowerCase())
+    );
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.header}>Search</Text>
@@ -60,7 +65,13 @@ export default function SearchScreen() {
                 )}
             </View>
 
-            {loading && <ActivityIndicator color="#e94560" style={{ marginTop: 24 }} />}
+            {loading && (
+                <View style={styles.list}>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                        <SkeletonCard key={i} variant="row" />
+                    ))}
+                </View>
+            )}
 
             {!loading && !query.trim() && (
                 <View style={styles.emptyState}>
@@ -69,41 +80,41 @@ export default function SearchScreen() {
                 </View>
             )}
 
-            {!loading && query.trim().length > 0 && results.length === 0 && (
+            {!loading && query.trim().length > 0 && filtered.length === 0 && (
                 <View style={styles.emptyState}>
                     <Text style={styles.emptyText}>No results for "{query}"</Text>
                 </View>
             )}
 
-            <FlatList
-                data={results.filter(item =>
-                    item.title.toLowerCase().includes(query.toLowerCase()) 
-                )}
-                keyExtractor={(item) => item.id.toString()}
-                contentContainerStyle={styles.list}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={styles.card}
-                        activeOpacity={0.7}
-                        onPress={() => router.navigate(`/home/${item.category}/${item.id}` as any)}
-                    >
-                        <Image source={{ uri: item.thumbnail }} style={styles.image} contentFit="contain" />
-                        <View style={styles.info}>
-                            <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
-                            <Text style={styles.brand}>{item.brand ?? "N/A"}</Text>
-                            <Text style={styles.price}>
-                                ${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}
-                            </Text>
-                        </View>
-                        {item.discountPercentage > 0 && (
-                            <View style={styles.badge}>
-                                <Text style={styles.badgeText}>-{Math.round(item.discountPercentage)}%</Text>
+            {!loading && (
+                <FlatList
+                    data={filtered}
+                    keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={styles.list}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity
+                            style={styles.card}
+                            activeOpacity={0.7}
+                            onPress={() => router.navigate(`/home/${item.category}/${item.id}` as any)}
+                        >
+                            <Image source={{ uri: item.thumbnail }} style={styles.image} contentFit="contain" />
+                            <View style={styles.info}>
+                                <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
+                                <Text style={styles.brand}>{item.brand ?? "N/A"}</Text>
+                                <Text style={styles.price}>
+                                    ${(item.price * (1 - item.discountPercentage / 100)).toFixed(2)}
+                                </Text>
                             </View>
-                        )}
-                    </TouchableOpacity>
-                )}
-            />
+                            {item.discountPercentage > 0 && (
+                                <View style={styles.badge}>
+                                    <Text style={styles.badgeText}>-{Math.round(item.discountPercentage)}%</Text>
+                                </View>
+                            )}
+                        </TouchableOpacity>
+                    )}
+                />
+            )}
         </SafeAreaView>
     );
 }
@@ -131,7 +142,7 @@ const styles = StyleSheet.create({
         borderWidth: 1, borderColor: "#0f3460",
     },
     image: { width: 80, height: 80, backgroundColor: "#1a1a2e" },
-    info: { flex: 1, padding: 12, paddingRight: 52,justifyContent: "center" },
+    info: { flex: 1, padding: 12, paddingRight: 52, justifyContent: "center" },
     title: { color: "#ffffff", fontSize: 14, fontWeight: "bold" },
     brand: { color: "#888", fontSize: 12, marginTop: 2 },
     price: { color: "#e94560", fontSize: 15, fontWeight: "bold", marginTop: 4 },
